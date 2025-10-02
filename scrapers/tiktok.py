@@ -29,8 +29,11 @@ def get_followers(username):
         # followerCountを探す
         follower_matches = re.findall(r'"followerCount["\s:]*:?\s*(\d+)', response.text)
         if follower_matches:
-            # 最小値を取得（丸められていない正確な値）
-            follower_count = min([int(count) for count in follower_matches])
+            # 最も下の桁が0でない値を取得（丸められていない正確な値）
+            counts = [int(count) for count in follower_matches]
+            # 末尾が0でない（丸められていない）値を優先
+            non_rounded = [c for c in counts if c % 10 != 0]
+            follower_count = non_rounded[0] if non_rounded else counts[0]
             logger.info(f"TikTok @{username} フォロワー数: {follower_count:,}")
             return follower_count
 
