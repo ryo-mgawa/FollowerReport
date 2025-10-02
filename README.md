@@ -60,7 +60,13 @@ python3 server.py
 
 ```
 FollowerReport/
-├── server.py          # Flaskバックエンドサーバー
+├── server.py          # Flaskバックエンドサーバー（自動読み込み）
+├── config.py          # 設定ファイル（ユーザー名・APIキー）
+├── scrapers/          # SNS取得処理モジュール
+│   ├── __init__.py
+│   ├── tiktok.py      # TikTok取得処理
+│   ├── youtube.py     # YouTube取得処理（テンプレート）
+│   └── instagram.py   # Instagram取得処理（テンプレート）
 ├── index.html         # メインページ
 ├── styles.css         # スタイルシート
 ├── app.js             # フロントエンドロジック
@@ -71,22 +77,45 @@ FollowerReport/
 
 ## 🔧 カスタマイズ
 
-### TikTokユーザー名の変更
+### 設定の変更
 
-`server.py`の以下の行を編集：
+`config.py`を編集：
 
 ```python
+# TikTok設定
 TIKTOK_USERNAME = "nyan.tsubu"  # ここを変更
+
+# YouTube設定
+YOUTUBE_CHANNEL_ID = ""     # YouTube チャンネルID
+YOUTUBE_API_KEY = ""        # APIキー
+
+# Instagram設定
+INSTAGRAM_USERNAME = ""     # Instagram ユーザー名
+INSTAGRAM_ACCESS_TOKEN = "" # アクセストークン
 ```
 
-### YouTube/Instagram対応
+### 新しいSNSの追加方法
 
-`server.py`の以下の変数にAPIキーとIDを設定：
+1. `scrapers/`ディレクトリに新しいファイルを作成（例: `twitter.py`）
+2. 以下のテンプレートで実装：
 
 ```python
-YOUTUBE_CHANNEL_ID = ""     # YouTube チャンネルID
-INSTAGRAM_USERNAME = ""     # Instagram ユーザー名
+import logging
+
+logger = logging.getLogger(__name__)
+
+def get_followers(username):
+    """フォロワー数を取得"""
+    # 実装をここに記述
+    return follower_count
+
+# メタデータ
+PLATFORM_NAME = "twitter"
+DISPLAY_NAME = "Twitter"
 ```
+
+3. `config.py`に設定を追加
+4. サーバーを再起動 → **自動で認識されます！**
 
 ## 🐛 トラブルシューティング
 

@@ -28,3 +28,6 @@ Thumbs.db
 # Environment
 .env
 .env.local
+
+# Config (個人設定を含む場合はコメントアウト解除)
+# config.py
