@@ -29,8 +29,8 @@ def get_followers(username):
         # followerCountを探す
         follower_matches = re.findall(r'"followerCount["\s:]*:?\s*(\d+)', response.text)
         if follower_matches:
-            # 最大値を取得（通常は正確な値）
-            follower_count = max([int(count) for count in follower_matches])
+            # 最小値を取得（丸められていない正確な値）
+            follower_count = min([int(count) for count in follower_matches])
             logger.info(f"TikTok @{username} フォロワー数: {follower_count:,}")
             return follower_count
 
