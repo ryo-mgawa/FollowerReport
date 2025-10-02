@@ -1,22 +1,33 @@
-// モックデータ生成関数
-function generateMockFollowerData() {
-    return {
-        tiktok: {
-            count: Math.floor(Math.random() * 10000) + 50000, // 50,000 ~ 60,000
-            username: '@nyan.tsubu',
-            available: true
-        },
-        youtube: {
-            count: Math.floor(Math.random() * 5000) + 20000, // 20,000 ~ 25,000
-            username: 'チャンネル未設定',
-            available: false
-        },
-        instagram: {
-            count: Math.floor(Math.random() * 8000) + 30000, // 30,000 ~ 38,000
-            username: 'アカウント未設定',
-            available: false
+// APIからデータを取得
+async function fetchFollowerData() {
+    try {
+        const response = await fetch('/api/followers');
+        if (!response.ok) {
+            throw new Error('API取得失敗');
         }
-    };
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('データ取得エラー:', error);
+        // エラー時はモックデータを返す
+        return {
+            tiktok: {
+                count: 0,
+                username: '@nyan.tsubu',
+                available: false
+            },
+            youtube: {
+                count: 0,
+                username: 'チャンネル未設定',
+                available: false
+            },
+            instagram: {
+                count: 0,
+                username: 'アカウント未設定',
+                available: false
+            }
+        };
+    }
 }
 
 // フォロワー数をフォーマット
@@ -101,15 +112,15 @@ function updateFollowerData(data) {
 }
 
 // 初期データ読み込み
-function initialize() {
-    const initialData = generateMockFollowerData();
+async function initialize() {
+    const initialData = await fetchFollowerData();
     updateFollowerData(initialData);
 }
 
 // リアルタイム更新（30秒ごと）
 function startRealtimeUpdates() {
-    setInterval(() => {
-        const newData = generateMockFollowerData();
+    setInterval(async () => {
+        const newData = await fetchFollowerData();
         updateFollowerData(newData);
     }, 30000); // 30秒
 }
@@ -120,31 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
     startRealtimeUpdates();
 });
 
-// 実際のAPI連携用の関数（将来の実装用）
-async function fetchTikTokFollowers(username) {
-    // TODO: Pythonスクリプトをバックエンドに移行してAPI化
-    // const response = await fetch(`/api/tiktok/${username}`);
-    // const data = await response.json();
-    // return data.followerCount;
-
-    // 現在はモックデータを返す
-    return Math.floor(Math.random() * 10000) + 50000;
-}
-
-async function fetchYouTubeSubscribers(channelId) {
-    // TODO: YouTube Data API v3を使用
-    // const response = await fetch(`/api/youtube/${channelId}`);
-    // const data = await response.json();
-    // return data.subscriberCount;
-
-    return Math.floor(Math.random() * 5000) + 20000;
-}
-
-async function fetchInstagramFollowers(username) {
-    // TODO: Instagram Graph APIを使用
-    // const response = await fetch(`/api/instagram/${username}`);
-    // const data = await response.json();
-    // return data.followerCount;
-
-    return Math.floor(Math.random() * 8000) + 30000;
+// TikTok個別取得（デバッグ用）
+async function fetchTikTokFollowers() {
+    try {
+        const response = await fetch('/api/tiktok');
+        const data = await response.json();
+        return data.count;
+    } catch (error) {
+        console.error('TikTok取得エラー:', error);
+        return 0;
+    }
 }
